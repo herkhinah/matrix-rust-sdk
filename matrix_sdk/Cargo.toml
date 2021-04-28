@@ -64,7 +64,8 @@ default-features = false
 optional = true
 
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies.backoff]
-version = "0.3.0"
+git = "https://github.com/herkhinah/backoff"
+branch = "shekhinah/manual-retry-timeout"
 features = ["tokio"]
 
 [dependencies.tracing-futures]

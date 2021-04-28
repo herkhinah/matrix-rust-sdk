@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use std::{convert::TryFrom, fmt::Debug, sync::Arc};
+use std::{collections::HashMap, convert::TryFrom, fmt::Debug, sync::Arc, time::Duration};
 
 #[cfg(all(not(target_arch = "wasm32")))]
 use backoff::{future::retry, Error as RetryError, ExponentialBackoff};
@@ -276,27 +276,50 @@ async fn send_request(
             false
         };
 
-        // Turn errors into permanent errors when the retry limit is reached
-        let error_type = if stop {
-            RetryError::Permanent
-        } else {
-            RetryError::Transient
-        };
-
         let request = request.try_clone().ok_or(HttpError::UnableToCloneRequest)?;
 
-        let response = client
-            .execute(request)
-            .await
-            .map_err(|e| error_type(HttpError::Reqwest(e)))?;
+        let response = client.execute(request).await.map_err(|e| {
+            if stop {
+                RetryError::Permanent(HttpError::Reqwest(e))
+            } else {
+                RetryError::Transient((HttpError::Reqwest(e), None))
+            }
+        })?;
 
         let status_code = response.status();
-        // TODO TOO_MANY_REQUESTS will have a retry timeout which we should
-        // use.
-        if !stop
-            && (status_code.is_server_error() || response.status() == StatusCode::TOO_MANY_REQUESTS)
-        {
-            return Err(error_type(HttpError::Server(status_code)));
+        if !stop {
+            if status_code.is_server_error() {
+                return Err(RetryError::Transient((HttpError::Server(status_code), None)));
+            }
+            if response.status() == StatusCode::TOO_MANY_REQUESTS {
+                if let Some(retry_after) = response
+                    .headers()
+                    .get("Retry-After")
+                    .and_then(|val| val.to_str().ok())
+                    .and_then(|s| s.parse::<u64>().ok())
+                {
+                    return Err(RetryError::Transient((
+                        HttpError::Server(status_code),
+                        Some(Duration::from_secs(retry_after)),
+                    )));
+                }
+                if let Some(retry_after_ms) = response
+                    .text()
+                    .await
+                    .ok()
+                    .and_then(|s| {
+                        serde_json::from_str::<HashMap<String, serde_json::Value>>(s.as_str()).ok()
+                    })
+                    .and_then(|map| map.get("retry_after_ms").and_then(|v| v.as_u64()))
+                {
+                    return Err(RetryError::Transient((
+                        HttpError::Server(status_code),
+                        Some(Duration::from_millis(retry_after_ms)),
+                    )));
+                }
+
+                return Err(RetryError::Transient((HttpError::Server(status_code), None)));
+            }
         }
 
         let response = response_to_http_response(response)
