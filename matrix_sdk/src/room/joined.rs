@@ -261,7 +261,7 @@ impl Joined {
     /// Does nothing if no group session needs to be shared.
     #[cfg(feature = "encryption")]
     #[cfg_attr(feature = "docs", doc(cfg(encryption)))]
-    async fn preshare_group_session(&self) -> Result<()> {
+    pub async fn preshare_group_session(&self) -> Result<()> {
         // TODO expose this publicly so people can pre-share a group session if
         // e.g. a user starts to type a message for a room.
         #[allow(clippy::map_clone)]
