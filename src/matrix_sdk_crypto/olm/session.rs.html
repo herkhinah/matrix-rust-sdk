@@ -271,11 +271,6 @@
 <span id="271">271</span>
 <span id="272">272</span>
 <span id="273">273</span>
-<span id="274">274</span>
-<span id="275">275</span>
-<span id="276">276</span>
-<span id="277">277</span>
-<span id="278">278</span>
 </pre><pre class="rust">
 <span class="comment">// Copyright 2020 The Matrix.org Foundation C.I.C.</span>
 <span class="comment">//</span>
@@ -293,25 +288,24 @@
 
 <span class="kw">use</span> <span class="ident">std</span>::{<span class="ident">collections::BTreeMap</span>, <span class="ident">fmt</span>, <span class="ident">sync::Arc</span>};
 
-<span class="kw">use</span> <span class="ident">matrix_sdk_common</span>::{
-    <span class="ident">events</span>::{
-        <span class="ident">room::encrypted</span>::{
-            <span class="ident">CiphertextInfo</span>, <span class="ident">EncryptedEventContent</span>, <span class="ident">EncryptedEventScheme</span>,
-            <span class="ident">OlmV1Curve25519AesSha2Content</span>,
-        },
-        <span class="ident">EventType</span>,
-    },
-    <span class="ident">identifiers</span>::{<span class="ident">DeviceId</span>, <span class="ident">DeviceKeyAlgorithm</span>, <span class="ident">UserId</span>},
-    <span class="ident">instant::Instant</span>,
-    <span class="ident">locks::Mutex</span>,
-};
+<span class="kw">use</span> <span class="ident">matrix_sdk_common</span>::{<span class="ident">instant::Instant</span>, <span class="ident">locks::Mutex</span>};
 <span class="kw">use</span> <span class="ident">olm_rs</span>::{<span class="ident">errors::OlmSessionError</span>, <span class="ident">session::OlmSession</span>, <span class="ident">PicklingMode</span>};
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">olm_rs</span>::{
     <span class="ident">session</span>::{<span class="ident">OlmMessage</span>, <span class="ident">PreKeyMessage</span>},
     <span class="ident">utility::OlmUtility</span>,
 };
+<span class="kw">use</span> <span class="ident">ruma</span>::{
+    <span class="ident">events</span>::{
+        <span class="ident">room::encrypted</span>::{
+            <span class="ident">CiphertextInfo</span>, <span class="ident">EncryptedEventContent</span>, <span class="ident">EncryptedEventScheme</span>,
+            <span class="ident">OlmV1Curve25519AesSha2Content</span>,
+        },
+        <span class="ident">AnyToDeviceEventContent</span>, <span class="ident">EventContent</span>,
+    },
+    <span class="ident">DeviceId</span>, <span class="ident">DeviceKeyAlgorithm</span>, <span class="ident">UserId</span>,
+};
 <span class="kw">use</span> <span class="ident">serde</span>::{<span class="ident">Deserialize</span>, <span class="ident">Serialize</span>};
-<span class="kw">use</span> <span class="ident">serde_json</span>::{<span class="ident">json</span>, <span class="ident">Value</span>};
+<span class="kw">use</span> <span class="ident">serde_json::json</span>;
 
 <span class="kw">use</span> <span class="kw">super</span>::{<span class="ident">deserialize_instant</span>, <span class="ident">serialize_instant</span>, <span class="ident">IdentityKeys</span>};
 <span class="kw">use</span> <span class="kw">crate</span>::{
@@ -324,7 +318,7 @@
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Session</span> {
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="ident">user_id</span>: <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">UserId</span><span class="op">&gt;</span>,
-    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="ident">device_id</span>: <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">Box</span><span class="op">&lt;</span><span class="ident">DeviceId</span><span class="op">&gt;</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="ident">device_id</span>: <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">DeviceId</span><span class="op">&gt;</span>,
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="ident">our_identity_keys</span>: <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">IdentityKeys</span><span class="op">&gt;</span>,
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="ident">inner</span>: <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">Mutex</span><span class="op">&lt;</span><span class="ident">OlmSession</span><span class="op">&gt;</span><span class="op">&gt;</span>,
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="ident">session_id</span>: <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">str</span><span class="op">&gt;</span>,
@@ -385,21 +379,17 @@
     <span class="doccomment">///   encrypted, this needs to be the device that was used to create this</span>
     <span class="doccomment">///   session with.</span>
     <span class="doccomment">///</span>
-    <span class="doccomment">/// * `event_type` - The type of the event.</span>
-    <span class="doccomment">///</span>
     <span class="doccomment">/// * `content` - The content of the event.</span>
     <span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">encrypt</span>(
         <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>,
         <span class="ident">recipient_device</span>: <span class="kw-2">&amp;</span><span class="ident">ReadOnlyDevice</span>,
-        <span class="ident">event_type</span>: <span class="ident">EventType</span>,
-        <span class="ident">content</span>: <span class="ident">Value</span>,
+        <span class="ident">content</span>: <span class="ident">AnyToDeviceEventContent</span>,
     ) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">OlmResult</span><span class="op">&lt;</span><span class="ident">EncryptedEventContent</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">recipient_signing_key</span> <span class="op">=</span> <span class="ident">recipient_device</span>
             .<span class="ident">get_key</span>(<span class="ident">DeviceKeyAlgorithm::Ed25519</span>)
             .<span class="ident">ok_or</span>(<span class="ident">EventError::MissingSigningKey</span>)<span class="question-mark">?</span>;
 
-        <span class="kw">let</span> <span class="ident">relates_to</span> <span class="op">=</span>
-            <span class="ident">content</span>.<span class="ident">get</span>(<span class="string">&quot;m.relates_to&quot;</span>).<span class="ident">cloned</span>().<span class="ident">and_then</span>(<span class="op">|</span><span class="ident">v</span><span class="op">|</span> <span class="ident">serde_json::from_value</span>(<span class="ident">v</span>).<span class="ident">ok</span>());
+        <span class="kw">let</span> <span class="ident">event_type</span> <span class="op">=</span> <span class="ident">content</span>.<span class="ident">event_type</span>();
 
         <span class="kw">let</span> <span class="ident">payload</span> <span class="op">=</span> <span class="macro">json!</span>({
             <span class="string">&quot;sender&quot;</span>: <span class="self">self</span>.<span class="ident">user_id</span>.<span class="ident">as_str</span>(),
@@ -429,7 +419,7 @@
                 <span class="ident">content</span>,
                 <span class="self">self</span>.<span class="ident">our_identity_keys</span>.<span class="ident">curve25519</span>().<span class="ident">to_string</span>(),
             )),
-            <span class="ident">relates_to</span>,
+            <span class="prelude-val">None</span>,
         ))
     }
 
@@ -493,7 +483,7 @@
     <span class="doccomment">/// an unencrypted mode or an encrypted using passphrase.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">from_pickle</span>(
         <span class="ident">user_id</span>: <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">UserId</span><span class="op">&gt;</span>,
-        <span class="ident">device_id</span>: <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">Box</span><span class="op">&lt;</span><span class="ident">DeviceId</span><span class="op">&gt;</span><span class="op">&gt;</span>,
+        <span class="ident">device_id</span>: <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">DeviceId</span><span class="op">&gt;</span>,
         <span class="ident">our_identity_keys</span>: <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">IdentityKeys</span><span class="op">&gt;</span>,
         <span class="ident">pickle</span>: <span class="ident">PickledSession</span>,
         <span class="ident">pickle_mode</span>: <span class="ident">PicklingMode</span>,
@@ -544,8 +534,8 @@
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">SessionPickle</span>(<span class="ident">String</span>);
 
 <span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">SessionPickle</span> {
-    <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">picle_string</span>: <span class="ident">String</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
-        <span class="ident">SessionPickle</span>(<span class="ident">picle_string</span>)
+    <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">pickle_string</span>: <span class="ident">String</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
+        <span class="ident">SessionPickle</span>(<span class="ident">pickle_string</span>)
     }
 }
 
