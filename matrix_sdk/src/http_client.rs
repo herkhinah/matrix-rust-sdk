@@ -300,55 +300,17 @@ async fn send_request(
     request: http::Request<Bytes>,
     config: RequestConfig,
 ) -> Result<http::Response<Bytes>, HttpError> {
-    use std::sync::atomic::{AtomicU64, Ordering};
-
-    use backoff::{future::retry, Error as RetryError, ExponentialBackoff};
-    use http::StatusCode;
-
-    let mut backoff = ExponentialBackoff::default();
     let mut request = reqwest::Request::try_from(request)?;
-    let retry_limit = config.retry_limit;
-    let retry_count = AtomicU64::new(1);
 
     *request.timeout_mut() = Some(config.timeout);
 
-    backoff.max_elapsed_time = config.retry_timeout;
 
-    let request = &request;
-    let retry_count = &retry_count;
+    let response =
+        client.execute(request).await.map_err(|e| HttpError::Reqwest(e))?;
 
-    let request = || async move {
-        let stop = if let Some(retry_limit) = retry_limit {
-            retry_count.fetch_add(1, Ordering::Relaxed) >= retry_limit
-        } else {
-            false
-        };
-
-        // Turn errors into permanent errors when the retry limit is reached
-        let error_type = if stop { RetryError::Permanent } else { RetryError::Transient };
-
-        let request = request.try_clone().ok_or(HttpError::UnableToCloneRequest)?;
-
-        let response =
-            client.execute(request).await.map_err(|e| error_type(HttpError::Reqwest(e)))?;
-
-        let status_code = response.status();
-        // TODO TOO_MANY_REQUESTS will have a retry timeout which we should
-        // use.
-        if !stop
-            && (status_code.is_server_error() || response.status() == StatusCode::TOO_MANY_REQUESTS)
-        {
-            return Err(error_type(HttpError::Server(status_code)));
-        }
-
-        let response = response_to_http_response(response)
-            .await
-            .map_err(|e| RetryError::Permanent(HttpError::Reqwest(e)))?;
-
-        Ok(response)
-    };
-
-    let response = retry(backoff, request).await?;
+    let response = response_to_http_response(response)
+        .await
+        .map_err(|e| HttpError::Reqwest(e))?;
 
     Ok(response)
 }
