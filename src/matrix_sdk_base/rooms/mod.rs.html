@@ -1,7 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `matrix_sdk_base/src/rooms/mod.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>mod.rs - source</title><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../light.css"  id="themeStyle"><link rel="stylesheet" type="text/css" href="../../../dark.css" disabled ><link rel="stylesheet" type="text/css" href="../../../ayu.css" disabled ><script id="default-settings"></script><script src="../../../storage.js"></script><script src="../../../crates.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="icon" type="image/svg+xml" href="../../../favicon.svg">
-<link rel="alternate icon" type="image/png" href="../../../favicon-16x16.png">
-<link rel="alternate icon" type="image/png" href="../../../favicon-32x32.png"><style type="text/css">#crate-search{background-image:url("../../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu" role="button">&#9776;</div><a href='../../../matrix_sdk_base/index.html'><div class='logo-container rust-logo'><img src='../../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu"><img src="../../../brush.svg" width="18" height="18" alt="Pick another theme!"></button><div id="theme-choices" role="menu"></div></div><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><button type="button" class="help-button">?</button>
-                <a id="settings-menu" href="../../../settings.html"><img src="../../../wheel.svg" width="18" height="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `matrix_sdk_base&#x2F;src&#x2F;rooms&#x2F;mod.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>mod.rs - source</title><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../light.css"  id="themeStyle"><link rel="stylesheet" type="text/css" href="../../../dark.css" disabled ><link rel="stylesheet" type="text/css" href="../../../ayu.css" disabled ><script id="default-settings" ></script><script src="../../../storage.js"></script><script src="../../../crates.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="icon" type="image/svg+xml" href="../../../favicon.svg"><link rel="alternate icon" type="image/png" href="../../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../../favicon-32x32.png"><style type="text/css">#crate-search{background-image:url("../../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu" role="button">&#9776;</div><a href='../../../matrix_sdk_base/index.html'><div class='logo-container rust-logo'><img src='../../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu" title="themes"><img width="18" height="18" alt="Pick another theme!" src="../../../brush.svg"></button><div id="theme-choices" role="menu"></div></div><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input"name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><button type="button" id="help-button" title="help">?</button><a id="settings-menu" href="../../../settings.html" title="settings"><img width="18" height="18" alt="Change settings" src="../../../wheel.svg"></a></div></form></nav><section id="main" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
 <span id="4">  4</span>
@@ -182,31 +179,72 @@
 <span id="179">179</span>
 <span id="180">180</span>
 <span id="181">181</span>
-</pre><div class="example-wrap"><pre class="rust ">
+<span id="182">182</span>
+<span id="183">183</span>
+<span id="184">184</span>
+<span id="185">185</span>
+<span id="186">186</span>
+<span id="187">187</span>
+<span id="188">188</span>
+<span id="189">189</span>
+<span id="190">190</span>
+<span id="191">191</span>
+<span id="192">192</span>
+<span id="193">193</span>
+<span id="194">194</span>
+<span id="195">195</span>
+<span id="196">196</span>
+<span id="197">197</span>
+<span id="198">198</span>
+<span id="199">199</span>
+<span id="200">200</span>
+<span id="201">201</span>
+<span id="202">202</span>
+<span id="203">203</span>
+<span id="204">204</span>
+<span id="205">205</span>
+<span id="206">206</span>
+<span id="207">207</span>
+<span id="208">208</span>
+<span id="209">209</span>
+<span id="210">210</span>
+<span id="211">211</span>
+<span id="212">212</span>
+<span id="213">213</span>
+<span id="214">214</span>
+<span id="215">215</span>
+<span id="216">216</span>
+<span id="217">217</span>
+<span id="218">218</span>
+<span id="219">219</span>
+<span id="220">220</span>
+<span id="221">221</span>
+<span id="222">222</span>
+<span id="223">223</span>
+<span id="224">224</span>
+<span id="225">225</span>
+<span id="226">226</span>
+<span id="227">227</span>
+</pre><pre class="rust">
 <span class="kw">mod</span> <span class="ident">members</span>;
 <span class="kw">mod</span> <span class="ident">normal</span>;
 
-<span class="kw">use</span> <span class="ident">matrix_sdk_common</span>::{
-    <span class="ident">events::room</span>::{
-        <span class="ident">create::CreateEventContent</span>, <span class="ident">guest_access::GuestAccess</span>,
-        <span class="ident">history_visibility::HistoryVisibility</span>, <span class="ident">join_rules::JoinRule</span>,
-    },
-    <span class="ident">identifiers</span>::{<span class="ident">MxcUri</span>, <span class="ident">UserId</span>},
-};
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">normal</span>::{<span class="ident">Room</span>, <span class="ident">RoomInfo</span>, <span class="ident">RoomType</span>};
-
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">members::RoomMember</span>;
-
-<span class="kw">use</span> <span class="ident">serde</span>::{<span class="ident">Deserialize</span>, <span class="ident">Serialize</span>};
 <span class="kw">use</span> <span class="ident">std::cmp::max</span>;
 
 <span class="kw">use</span> <span class="ident">matrix_sdk_common</span>::{
     <span class="ident">events</span>::{
-        <span class="ident">room</span>::{<span class="ident">encryption::EncryptionEventContent</span>, <span class="ident">tombstone::TombstoneEventContent</span>},
+        <span class="ident">room</span>::{
+            <span class="ident">create::CreateEventContent</span>, <span class="ident">encryption::EncryptionEventContent</span>,
+            <span class="ident">guest_access::GuestAccess</span>, <span class="ident">history_visibility::HistoryVisibility</span>, <span class="ident">join_rules::JoinRule</span>,
+            <span class="ident">tombstone::TombstoneEventContent</span>,
+        },
         <span class="ident">AnyStateEventContent</span>,
     },
-    <span class="ident">identifiers::RoomAliasId</span>,
+    <span class="ident">identifiers</span>::{<span class="ident">MxcUri</span>, <span class="ident">RoomAliasId</span>, <span class="ident">UserId</span>},
 };
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">members::RoomMember</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">normal</span>::{<span class="ident">Room</span>, <span class="ident">RoomInfo</span>, <span class="ident">RoomType</span>};
+<span class="kw">use</span> <span class="ident">serde</span>::{<span class="ident">Deserialize</span>, <span class="ident">Serialize</span>};
 
 <span class="doccomment">/// A base room info struct that is the backbone of normal as well as stripped</span>
 <span class="doccomment">/// rooms. Holds all the state events that are important to present a room to</span>
@@ -252,36 +290,11 @@
         <span class="ident">invited_member_count</span>: <span class="ident">u64</span>,
         <span class="ident">heroes</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">RoomMember</span><span class="op">&gt;</span>,
     ) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">String</span> {
-        <span class="kw">let</span> <span class="ident">heroes_count</span> <span class="op">=</span> <span class="ident">heroes</span>.<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">u64</span>;
-        <span class="kw">let</span> <span class="ident">invited_joined</span> <span class="op">=</span> (<span class="ident">invited_member_count</span> <span class="op">+</span> <span class="ident">joined_member_count</span>).<span class="ident">saturating_sub</span>(<span class="number">1</span>);
-
-        <span class="kw">if</span> <span class="ident">heroes_count</span> <span class="op">&gt;</span><span class="op">=</span> <span class="ident">invited_joined</span> {
-            <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">names</span> <span class="op">=</span> <span class="ident">heroes</span>
-                .<span class="ident">iter</span>()
-                .<span class="ident">take</span>(<span class="number">3</span>)
-                .<span class="ident">map</span>(<span class="op">|</span><span class="ident">mem</span><span class="op">|</span> <span class="ident">mem</span>.<span class="ident">name</span>())
-                .<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">str</span><span class="op">&gt;</span><span class="op">&gt;</span>();
-            <span class="comment">// stabilize ordering</span>
-            <span class="ident">names</span>.<span class="ident">sort_unstable</span>();
-            <span class="ident">names</span>.<span class="ident">join</span>(<span class="string">&quot;, &quot;</span>)
-        } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">heroes_count</span> <span class="op">&lt;</span> <span class="ident">invited_joined</span> <span class="op">&amp;&amp;</span> <span class="ident">invited_joined</span> <span class="op">&gt;</span> <span class="number">1</span> {
-            <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">names</span> <span class="op">=</span> <span class="ident">heroes</span>
-                .<span class="ident">iter</span>()
-                .<span class="ident">take</span>(<span class="number">3</span>)
-                .<span class="ident">map</span>(<span class="op">|</span><span class="ident">mem</span><span class="op">|</span> <span class="ident">mem</span>.<span class="ident">name</span>())
-                .<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">str</span><span class="op">&gt;</span><span class="op">&gt;</span>();
-            <span class="ident">names</span>.<span class="ident">sort_unstable</span>();
-
-            <span class="comment">// TODO: What length does the spec want us to use here and in</span>
-            <span class="comment">// the `else`?</span>
-            <span class="macro">format!</span>(
-                <span class="string">&quot;{}, and {} others&quot;</span>,
-                <span class="ident">names</span>.<span class="ident">join</span>(<span class="string">&quot;, &quot;</span>),
-                (<span class="ident">joined_member_count</span> <span class="op">+</span> <span class="ident">invited_member_count</span>)
-            )
-        } <span class="kw">else</span> {
-            <span class="string">&quot;Empty room&quot;</span>.<span class="ident">to_string</span>()
-        }
+        <span class="ident">calculate_room_name</span>(
+            <span class="ident">joined_member_count</span>,
+            <span class="ident">invited_member_count</span>,
+            <span class="ident">heroes</span>.<span class="ident">iter</span>().<span class="ident">take</span>(<span class="number">3</span>).<span class="ident">map</span>(<span class="op">|</span><span class="ident">mem</span><span class="op">|</span> <span class="ident">mem</span>.<span class="ident">name</span>()).<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">str</span><span class="op">&gt;</span><span class="op">&gt;</span>(),
+        )
     }
 
     <span class="doccomment">/// Handle a state event for this room and update our info accordingly.</span>
@@ -334,10 +347,8 @@
                 <span class="bool-val">true</span>
             }
             <span class="ident">AnyStateEventContent::RoomPowerLevels</span>(<span class="ident">p</span>) <span class="op">=</span><span class="op">&gt;</span> {
-                <span class="kw">let</span> <span class="ident">max_power_level</span> <span class="op">=</span> <span class="ident">p</span>
-                    .<span class="ident">users</span>
-                    .<span class="ident">values</span>()
-                    .<span class="ident">fold</span>(<span class="self">self</span>.<span class="ident">max_power_level</span>, <span class="op">|</span><span class="ident">acc</span>, <span class="ident">p</span><span class="op">|</span> <span class="ident">max</span>(<span class="ident">acc</span>, (<span class="kw-2">*</span><span class="ident">p</span>).<span class="ident">into</span>()));
+                <span class="kw">let</span> <span class="ident">max_power_level</span> <span class="op">=</span>
+                    <span class="ident">p</span>.<span class="ident">users</span>.<span class="ident">values</span>().<span class="ident">fold</span>(<span class="self">self</span>.<span class="ident">max_power_level</span>, <span class="op">|</span><span class="ident">acc</span>, <span class="ident">p</span><span class="op">|</span> <span class="ident">max</span>(<span class="ident">acc</span>, (<span class="kw-2">*</span><span class="ident">p</span>).<span class="ident">into</span>()));
                 <span class="self">self</span>.<span class="ident">max_power_level</span> <span class="op">=</span> <span class="ident">max_power_level</span>;
                 <span class="bool-val">true</span>
             }
@@ -364,6 +375,85 @@
         }
     }
 }
+
+<span class="doccomment">/// Calculate room name according to step 3 of the [naming algorithm.][spec]</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// [spec]: &lt;https://matrix.org/docs/spec/client_server/latest#calculating-the-display-name-for-a-room&gt;</span>
+<span class="kw">fn</span> <span class="ident">calculate_room_name</span>(
+    <span class="ident">joined_member_count</span>: <span class="ident">u64</span>,
+    <span class="ident">invited_member_count</span>: <span class="ident">u64</span>,
+    <span class="ident">heroes</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">str</span><span class="op">&gt;</span>,
+) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">String</span> {
+    <span class="kw">let</span> <span class="ident">heroes_count</span> <span class="op">=</span> <span class="ident">heroes</span>.<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">u64</span>;
+    <span class="kw">let</span> <span class="ident">invited_joined</span> <span class="op">=</span> <span class="ident">invited_member_count</span> <span class="op">+</span> <span class="ident">joined_member_count</span>;
+    <span class="kw">let</span> <span class="ident">invited_joined_minus_one</span> <span class="op">=</span> <span class="ident">invited_joined</span>.<span class="ident">saturating_sub</span>(<span class="number">1</span>);
+
+    <span class="kw">let</span> <span class="ident">names</span> <span class="op">=</span> <span class="kw">if</span> <span class="ident">heroes_count</span> <span class="op">&gt;</span><span class="op">=</span> <span class="ident">invited_joined_minus_one</span> {
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">names</span> <span class="op">=</span> <span class="ident">heroes</span>;
+        <span class="comment">// stabilize ordering</span>
+        <span class="ident">names</span>.<span class="ident">sort_unstable</span>();
+        <span class="ident">names</span>.<span class="ident">join</span>(<span class="string">&quot;, &quot;</span>)
+    } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">heroes_count</span> <span class="op">&lt;</span> <span class="ident">invited_joined_minus_one</span> <span class="op">&amp;&amp;</span> <span class="ident">invited_joined</span> <span class="op">&gt;</span> <span class="number">1</span> {
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">names</span> <span class="op">=</span> <span class="ident">heroes</span>;
+        <span class="ident">names</span>.<span class="ident">sort_unstable</span>();
+
+        <span class="comment">// TODO: What length does the spec want us to use here and in</span>
+        <span class="comment">// the `else`?</span>
+        <span class="macro">format!</span>(<span class="string">&quot;{}, and {} others&quot;</span>, <span class="ident">names</span>.<span class="ident">join</span>(<span class="string">&quot;, &quot;</span>), (<span class="ident">invited_joined</span> <span class="op">-</span> <span class="ident">heroes_count</span>))
+    } <span class="kw">else</span> {
+        <span class="string">&quot;&quot;</span>.<span class="ident">to_string</span>()
+    };
+
+    <span class="comment">// User is alone.</span>
+    <span class="kw">if</span> <span class="ident">invited_joined</span> <span class="op">&lt;</span><span class="op">=</span> <span class="number">1</span> {
+        <span class="kw">if</span> <span class="ident">names</span>.<span class="ident">is_empty</span>() {
+            <span class="string">&quot;Empty room&quot;</span>.<span class="ident">to_string</span>()
+        } <span class="kw">else</span> {
+            <span class="macro">format!</span>(<span class="string">&quot;Empty room (was {})&quot;</span>, <span class="ident">names</span>)
+        }
+    } <span class="kw">else</span> {
+        <span class="ident">names</span>
+    }
+}
+
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
+<span class="kw">mod</span> <span class="ident">tests</span> {
+    <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
+    <span class="attribute">#[<span class="ident">test</span>]</span>
+
+    <span class="kw">fn</span> <span class="ident">test_calculate_room_name</span>() {
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">actual</span> <span class="op">=</span> <span class="ident">calculate_room_name</span>(<span class="number">2</span>, <span class="number">0</span>, <span class="macro">vec!</span>[<span class="string">&quot;a&quot;</span>]);
+        <span class="macro">assert_eq!</span>(<span class="string">&quot;a&quot;</span>, <span class="ident">actual</span>);
+
+        <span class="ident">actual</span> <span class="op">=</span> <span class="ident">calculate_room_name</span>(<span class="number">3</span>, <span class="number">0</span>, <span class="macro">vec!</span>[<span class="string">&quot;a&quot;</span>, <span class="string">&quot;b&quot;</span>]);
+        <span class="macro">assert_eq!</span>(<span class="string">&quot;a, b&quot;</span>, <span class="ident">actual</span>);
+
+        <span class="ident">actual</span> <span class="op">=</span> <span class="ident">calculate_room_name</span>(<span class="number">4</span>, <span class="number">0</span>, <span class="macro">vec!</span>[<span class="string">&quot;a&quot;</span>, <span class="string">&quot;b&quot;</span>, <span class="string">&quot;c&quot;</span>]);
+        <span class="macro">assert_eq!</span>(<span class="string">&quot;a, b, c&quot;</span>, <span class="ident">actual</span>);
+
+        <span class="ident">actual</span> <span class="op">=</span> <span class="ident">calculate_room_name</span>(<span class="number">5</span>, <span class="number">0</span>, <span class="macro">vec!</span>[<span class="string">&quot;a&quot;</span>, <span class="string">&quot;b&quot;</span>, <span class="string">&quot;c&quot;</span>]);
+        <span class="macro">assert_eq!</span>(<span class="string">&quot;a, b, c, and 2 others&quot;</span>, <span class="ident">actual</span>);
+
+        <span class="ident">actual</span> <span class="op">=</span> <span class="ident">calculate_room_name</span>(<span class="number">0</span>, <span class="number">0</span>, <span class="macro">vec!</span>[]);
+        <span class="macro">assert_eq!</span>(<span class="string">&quot;Empty room&quot;</span>, <span class="ident">actual</span>);
+
+        <span class="ident">actual</span> <span class="op">=</span> <span class="ident">calculate_room_name</span>(<span class="number">1</span>, <span class="number">0</span>, <span class="macro">vec!</span>[]);
+        <span class="macro">assert_eq!</span>(<span class="string">&quot;Empty room&quot;</span>, <span class="ident">actual</span>);
+
+        <span class="ident">actual</span> <span class="op">=</span> <span class="ident">calculate_room_name</span>(<span class="number">0</span>, <span class="number">1</span>, <span class="macro">vec!</span>[]);
+        <span class="macro">assert_eq!</span>(<span class="string">&quot;Empty room&quot;</span>, <span class="ident">actual</span>);
+
+        <span class="ident">actual</span> <span class="op">=</span> <span class="ident">calculate_room_name</span>(<span class="number">1</span>, <span class="number">0</span>, <span class="macro">vec!</span>[<span class="string">&quot;a&quot;</span>]);
+        <span class="macro">assert_eq!</span>(<span class="string">&quot;Empty room (was a)&quot;</span>, <span class="ident">actual</span>);
+
+        <span class="ident">actual</span> <span class="op">=</span> <span class="ident">calculate_room_name</span>(<span class="number">1</span>, <span class="number">0</span>, <span class="macro">vec!</span>[<span class="string">&quot;a&quot;</span>, <span class="string">&quot;b&quot;</span>]);
+        <span class="macro">assert_eq!</span>(<span class="string">&quot;Empty room (was a, b)&quot;</span>, <span class="ident">actual</span>);
+
+        <span class="ident">actual</span> <span class="op">=</span> <span class="ident">calculate_room_name</span>(<span class="number">1</span>, <span class="number">0</span>, <span class="macro">vec!</span>[<span class="string">&quot;a&quot;</span>, <span class="string">&quot;b&quot;</span>, <span class="string">&quot;c&quot;</span>]);
+        <span class="macro">assert_eq!</span>(<span class="string">&quot;Empty room (was a, b, c)&quot;</span>, <span class="ident">actual</span>);
+    }
+}
 </pre></div>
 </section><section id="search" class="content hidden"></section><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="matrix_sdk_base" data-search-index-js="../../../search-index.js" data-search-js="../../../search.js"></div>
-    <script src="../../../main.js"></script><script src="../../../source-script.js"></script><script src="../../../source-files.js"></script></body></html>
+    <script src="../../../main.js"></script><script src="../../../source-script.js"></script><script src="../../../source-files.js"></script>
+</body></html>

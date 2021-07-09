@@ -1,7 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `matrix_sdk/src/error.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>error.rs - source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../light.css"  id="themeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css" disabled ><link rel="stylesheet" type="text/css" href="../../ayu.css" disabled ><script id="default-settings"></script><script src="../../storage.js"></script><script src="../../crates.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="icon" type="image/svg+xml" href="../../favicon.svg">
-<link rel="alternate icon" type="image/png" href="../../favicon-16x16.png">
-<link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu" role="button">&#9776;</div><a href='../../matrix_sdk/index.html'><div class='logo-container rust-logo'><img src='../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu"><img src="../../brush.svg" width="18" height="18" alt="Pick another theme!"></button><div id="theme-choices" role="menu"></div></div><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><button type="button" class="help-button">?</button>
-                <a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" height="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `matrix_sdk&#x2F;src&#x2F;error.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>error.rs - source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../light.css"  id="themeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css" disabled ><link rel="stylesheet" type="text/css" href="../../ayu.css" disabled ><script id="default-settings" ></script><script src="../../storage.js"></script><script src="../../crates.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="icon" type="image/svg+xml" href="../../favicon.svg"><link rel="alternate icon" type="image/png" href="../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu" role="button">&#9776;</div><a href='../../matrix_sdk/index.html'><div class='logo-container rust-logo'><img src='../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu" title="themes"><img width="18" height="18" alt="Pick another theme!" src="../../brush.svg"></button><div id="theme-choices" role="menu"></div></div><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input"name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><button type="button" id="help-button" title="help">?</button><a id="settings-menu" href="../../settings.html" title="settings"><img width="18" height="18" alt="Change settings" src="../../wheel.svg"></a></div></form></nav><section id="main" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
 <span id="4">  4</span>
@@ -149,7 +146,25 @@
 <span id="146">146</span>
 <span id="147">147</span>
 <span id="148">148</span>
-</pre><div class="example-wrap"><pre class="rust ">
+<span id="149">149</span>
+<span id="150">150</span>
+<span id="151">151</span>
+<span id="152">152</span>
+<span id="153">153</span>
+<span id="154">154</span>
+<span id="155">155</span>
+<span id="156">156</span>
+<span id="157">157</span>
+<span id="158">158</span>
+<span id="159">159</span>
+<span id="160">160</span>
+<span id="161">161</span>
+<span id="162">162</span>
+<span id="163">163</span>
+<span id="164">164</span>
+<span id="165">165</span>
+<span id="166">166</span>
+</pre><pre class="rust">
 <span class="comment">// Copyright 2020 The Matrix.org Foundation C.I.C.</span>
 <span class="comment">//</span>
 <span class="comment">// Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);</span>
@@ -166,23 +181,24 @@
 
 <span class="doccomment">//! Error conditions.</span>
 
+<span class="kw">use</span> <span class="ident">std::io::Error</span> <span class="kw">as</span> <span class="ident">IoError</span>;
+
 <span class="kw">use</span> <span class="ident">http::StatusCode</span>;
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;encryption&quot;</span>)]</span>
+<span class="kw">use</span> <span class="ident">matrix_sdk_base::crypto::store::CryptoStoreError</span>;
 <span class="kw">use</span> <span class="ident">matrix_sdk_base</span>::{<span class="ident">Error</span> <span class="kw">as</span> <span class="ident">MatrixError</span>, <span class="ident">StoreError</span>};
 <span class="kw">use</span> <span class="ident">matrix_sdk_common</span>::{
     <span class="ident">api</span>::{
         <span class="ident">r0::uiaa</span>::{<span class="ident">UiaaInfo</span>, <span class="ident">UiaaResponse</span> <span class="kw">as</span> <span class="ident">UiaaError</span>},
-        <span class="ident">Error</span> <span class="kw">as</span> <span class="ident">RumaClientError</span>,
+        <span class="ident">Error</span> <span class="kw">as</span> <span class="ident">RumaClientApiError</span>,
     },
     <span class="ident">identifiers::Error</span> <span class="kw">as</span> <span class="ident">IdentifierError</span>,
-    <span class="ident">FromHttpResponseError</span>, <span class="ident">IntoHttpError</span>, <span class="ident">ServerError</span>,
+    <span class="ident">FromHttpResponseError</span>, <span class="ident">IntoHttpError</span>, <span class="ident">MatrixError</span> <span class="kw">as</span> <span class="ident">RumaApiError</span>, <span class="ident">ServerError</span>,
 };
 <span class="kw">use</span> <span class="ident">reqwest::Error</span> <span class="kw">as</span> <span class="ident">ReqwestError</span>;
 <span class="kw">use</span> <span class="ident">serde_json::Error</span> <span class="kw">as</span> <span class="ident">JsonError</span>;
-<span class="kw">use</span> <span class="ident">std::io::Error</span> <span class="kw">as</span> <span class="ident">IoError</span>;
 <span class="kw">use</span> <span class="ident">thiserror::Error</span>;
-
-<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;encryption&quot;</span>)]</span>
-<span class="kw">use</span> <span class="ident">matrix_sdk_base::crypto::store::CryptoStoreError</span>;
+<span class="kw">use</span> <span class="ident">url::ParseError</span> <span class="kw">as</span> <span class="ident">UrlParseError</span>;
 
 <span class="doccomment">/// Result type of the rust-sdk.</span>
 <span class="kw">pub</span> <span class="kw">type</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">std::result::Result</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Error</span><span class="op">&gt;</span>;
@@ -195,11 +211,13 @@
     <span class="attribute">#[<span class="ident">error</span>(<span class="ident">transparent</span>)]</span>
     <span class="ident">Reqwest</span>(<span class="attribute">#[<span class="ident">from</span>]</span> <span class="ident">ReqwestError</span>),
 
-    <span class="doccomment">/// Queried endpoint requires authentication but was called on an anonymous client.</span>
+    <span class="doccomment">/// Queried endpoint requires authentication but was called on an anonymous</span>
+    <span class="doccomment">/// client.</span>
     <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;the queried endpoint requires authentication but was called before logging in&quot;</span>)]</span>
     <span class="ident">AuthenticationRequired</span>,
 
-    <span class="doccomment">/// Client tried to force authentication but did not provide an access token.</span>
+    <span class="doccomment">/// Client tried to force authentication but did not provide an access</span>
+    <span class="doccomment">/// token.</span>
     <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;tried to force authentication but no access token was provided&quot;</span>)]</span>
     <span class="ident">ForcedAuthenticationWithoutAccessToken</span>,
 
@@ -207,9 +225,13 @@
     <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;the queried endpoint is not meant for clients&quot;</span>)]</span>
     <span class="ident">NotClientRequest</span>,
 
+    <span class="doccomment">/// An error converting between ruma_*_api types and Hyper types.</span>
+    <span class="attribute">#[<span class="ident">error</span>(<span class="ident">transparent</span>)]</span>
+    <span class="ident">Api</span>(<span class="attribute">#[<span class="ident">from</span>]</span> <span class="ident">FromHttpResponseError</span><span class="op">&lt;</span><span class="ident">RumaApiError</span><span class="op">&gt;</span>),
+
     <span class="doccomment">/// An error converting between ruma_client_api types and Hyper types.</span>
     <span class="attribute">#[<span class="ident">error</span>(<span class="ident">transparent</span>)]</span>
-    <span class="ident">FromHttpResponse</span>(<span class="attribute">#[<span class="ident">from</span>]</span> <span class="ident">FromHttpResponseError</span><span class="op">&lt;</span><span class="ident">RumaClientError</span><span class="op">&gt;</span>),
+    <span class="ident">ClientApi</span>(<span class="attribute">#[<span class="ident">from</span>]</span> <span class="ident">FromHttpResponseError</span><span class="op">&lt;</span><span class="ident">RumaClientApiError</span><span class="op">&gt;</span>),
 
     <span class="doccomment">/// An error converting between ruma_client_api types and Hyper types.</span>
     <span class="attribute">#[<span class="ident">error</span>(<span class="ident">transparent</span>)]</span>
@@ -217,9 +239,10 @@
 
     <span class="doccomment">/// An error occurred while authenticating.</span>
     <span class="doccomment">///</span>
-    <span class="doccomment">/// When registering or authenticating the Matrix server can send a `UiaaResponse`</span>
-    <span class="doccomment">/// as the error type, this is a User-Interactive Authentication API response. This</span>
-    <span class="doccomment">/// represents an error with information about how to authenticate the user.</span>
+    <span class="doccomment">/// When registering or authenticating the Matrix server can send a</span>
+    <span class="doccomment">/// `UiaaResponse` as the error type, this is a User-Interactive</span>
+    <span class="doccomment">/// Authentication API response. This represents an error with</span>
+    <span class="doccomment">/// information about how to authenticate the user.</span>
     <span class="attribute">#[<span class="ident">error</span>(<span class="ident">transparent</span>)]</span>
     <span class="ident">UiaaError</span>(<span class="attribute">#[<span class="ident">from</span>]</span> <span class="ident">FromHttpResponseError</span><span class="op">&lt;</span><span class="ident">UiaaError</span><span class="op">&gt;</span>),
 
@@ -230,6 +253,11 @@
     <span class="doccomment">/// The given request can&#39;t be cloned and thus can&#39;t be retried.</span>
     <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;The request cannot be cloned&quot;</span>)]</span>
     <span class="ident">UnableToCloneRequest</span>,
+
+    <span class="doccomment">/// Tried to send a request without `user_id` in the `Session`</span>
+    <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;missing user_id in session&quot;</span>)]</span>
+    <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;appservice&quot;</span>)]</span>
+    <span class="ident">UserIdRequired</span>,
 }
 
 <span class="doccomment">/// Internal representation of errors.</span>
@@ -239,7 +267,8 @@
     <span class="attribute">#[<span class="ident">error</span>(<span class="ident">transparent</span>)]</span>
     <span class="ident">Http</span>(<span class="attribute">#[<span class="ident">from</span>]</span> <span class="ident">HttpError</span>),
 
-    <span class="doccomment">/// Queried endpoint requires authentication but was called on an anonymous client.</span>
+    <span class="doccomment">/// Queried endpoint requires authentication but was called on an anonymous</span>
+    <span class="doccomment">/// client.</span>
     <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;the queried endpoint requires authentication but was called before logging in&quot;</span>)]</span>
     <span class="ident">AuthenticationRequired</span>,
 
@@ -267,6 +296,10 @@
     <span class="doccomment">/// An error encountered when trying to parse an identifier.</span>
     <span class="attribute">#[<span class="ident">error</span>(<span class="ident">transparent</span>)]</span>
     <span class="ident">Identifier</span>(<span class="attribute">#[<span class="ident">from</span>]</span> <span class="ident">IdentifierError</span>),
+
+    <span class="doccomment">/// An error encountered when trying to parse a url.</span>
+    <span class="attribute">#[<span class="ident">error</span>(<span class="ident">transparent</span>)]</span>
+    <span class="ident">Url</span>(<span class="attribute">#[<span class="ident">from</span>]</span> <span class="ident">UrlParseError</span>),
 }
 
 <span class="kw">impl</span> <span class="ident">Error</span> {
@@ -300,4 +333,5 @@
 }
 </pre></div>
 </section><section id="search" class="content hidden"></section><div id="rustdoc-vars" data-root-path="../../" data-current-crate="matrix_sdk" data-search-index-js="../../search-index.js" data-search-js="../../search.js"></div>
-    <script src="../../main.js"></script><script src="../../source-script.js"></script><script src="../../source-files.js"></script></body></html>
+    <script src="../../main.js"></script><script src="../../source-script.js"></script><script src="../../source-files.js"></script>
+</body></html>
